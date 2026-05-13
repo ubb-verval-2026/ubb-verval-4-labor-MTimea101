@@ -158,6 +158,21 @@ public class PersonPageTests
         wait.Until(ExpectedConditions.ElementExists(By.CssSelector(".validation-errors"))).Text.Should().NotBeNullOrEmpty();
         wait.Until(ExpectedConditions.ElementExists(By.CssSelector(".field-validation-error"))).Text.Should().NotBeNullOrEmpty();
     }
+
+    [Test]
+    public void BlazeDemo_MexicoCity_To_Dublin_ShouldHaveAtLeastThreeFlights()
+    {
+        driver.Navigate().GoToUrl("https://blazedemo.com");
+
+        driver.FindElement(By.XPath("//select[@name='fromPort']/option[text()='Mexico City']")).Click();
+        driver.FindElement(By.XPath("//select[@name='toPort']/option[text()='Dublin']")).Click();
+        driver.FindElement(By.CssSelector("input[type='submit']")).Click();
+
+        var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
+        wait.Until(ExpectedConditions.ElementExists(By.CssSelector("table tbody tr")));
+
+        driver.FindElements(By.CssSelector("table tbody tr")).Count.Should().BeGreaterThanOrEqualTo(3);
+    }
     private bool IsElementPresent(By by)
     {
         try
