@@ -140,6 +140,24 @@ public class PersonPageTests
         wait.Until(ExpectedConditions.ElementExists(By.CssSelector(".validation-errors"))).Text.Should().NotBeNullOrEmpty();
         wait.Until(ExpectedConditions.ElementExists(By.CssSelector(".field-validation-error"))).Text.Should().NotBeNullOrEmpty();
     }
+
+    [Test]
+    public void Person_SalaryIncrease_ExactlyMinusTen_ShouldShowErrors()
+    {
+        driver.Navigate().GoToUrl(BaseURL);
+        driver.FindElement(By.XPath("//*[@data-test='PersonPageNavigation']")).Click();
+
+        var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(5));
+
+        var input = wait.Until(ExpectedConditions.ElementExists(By.XPath("//*[@data-test='SalaryIncreasePercentageInput']")));
+        input.Clear();
+        input.SendKeys("-10");
+
+        driver.FindElement(By.XPath("//*[@data-test='SalaryIncreaseSubmitButton']")).Click();
+
+        wait.Until(ExpectedConditions.ElementExists(By.CssSelector(".validation-errors"))).Text.Should().NotBeNullOrEmpty();
+        wait.Until(ExpectedConditions.ElementExists(By.CssSelector(".field-validation-error"))).Text.Should().NotBeNullOrEmpty();
+    }
     private bool IsElementPresent(By by)
     {
         try
