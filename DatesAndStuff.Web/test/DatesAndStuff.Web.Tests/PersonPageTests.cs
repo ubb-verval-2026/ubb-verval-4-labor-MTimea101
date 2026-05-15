@@ -106,6 +106,7 @@ public class PersonPageTests
         // Arrange
         driver.Navigate().GoToUrl(BaseURL);
         driver.FindElement(By.XPath("//*[@data-test='PersonPageNavigation']")).Click();
+        System.Threading.Thread.Sleep(1000);
 
         var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(5));
 
@@ -128,6 +129,7 @@ public class PersonPageTests
     {
         driver.Navigate().GoToUrl(BaseURL);
         driver.FindElement(By.XPath("//*[@data-test='PersonPageNavigation']")).Click();
+        System.Threading.Thread.Sleep(1000);
 
         var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(5));
 
@@ -146,6 +148,7 @@ public class PersonPageTests
     {
         driver.Navigate().GoToUrl(BaseURL);
         driver.FindElement(By.XPath("//*[@data-test='PersonPageNavigation']")).Click();
+        System.Threading.Thread.Sleep(1000);
 
         var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(5));
 
