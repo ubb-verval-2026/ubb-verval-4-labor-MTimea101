@@ -97,28 +97,84 @@ public class PersonPageTests
         Assert.That(verificationErrors.ToString(), Is.EqualTo(""));
     }
 
-    [Test]
-    public void Person_SalaryIncrease_ShouldIncrease()
+    [TestCase(5, 5250)]
+    [TestCase(10, 5500)]
+    [TestCase(0, 5000)]
+    [TestCase(50, 7500)]
+    public void Person_SalaryIncrease_ShouldIncrease(double percentage, double expectedSalary)
     {
         // Arrange
         driver.Navigate().GoToUrl(BaseURL);
         driver.FindElement(By.XPath("//*[@data-test='PersonPageNavigation']")).Click();
+        System.Threading.Thread.Sleep(1000);
 
         var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(5));
 
         var input = wait.Until(ExpectedConditions.ElementExists(By.XPath("//*[@data-test='SalaryIncreasePercentageInput']")));
         input.Clear();
-        input.SendKeys("5");
+        input.SendKeys(percentage.ToString());
 
         // Act
         var submitButton = wait.Until(ExpectedConditions.ElementExists(By.XPath("//*[@data-test='SalaryIncreaseSubmitButton']")));
         submitButton.Click();
 
-
         // Assert
         var salaryLabel = wait.Until(ExpectedConditions.ElementExists(By.XPath("//*[@data-test='DisplayedSalary']")));
         var salaryAfterSubmission = double.Parse(salaryLabel.Text);
-        salaryAfterSubmission.Should().BeApproximately(5250, 0.001);
+        salaryAfterSubmission.Should().BeApproximately(expectedSalary, 0.001);
+    }
+
+    [Test]
+    public void Person_SalaryIncrease_BelowMinusTen_ShouldShowErrors()
+    {
+        driver.Navigate().GoToUrl(BaseURL);
+        driver.FindElement(By.XPath("//*[@data-test='PersonPageNavigation']")).Click();
+        System.Threading.Thread.Sleep(1000);
+
+        var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(5));
+
+        var input = wait.Until(ExpectedConditions.ElementExists(By.XPath("//*[@data-test='SalaryIncreasePercentageInput']")));
+        input.Clear();
+        input.SendKeys("-11");
+
+        driver.FindElement(By.XPath("//*[@data-test='SalaryIncreaseSubmitButton']")).Click();
+
+        wait.Until(ExpectedConditions.ElementExists(By.CssSelector(".validation-errors"))).Text.Should().NotBeNullOrEmpty();
+        wait.Until(ExpectedConditions.ElementExists(By.CssSelector(".field-validation-error"))).Text.Should().NotBeNullOrEmpty();
+    }
+
+    [Test]
+    public void Person_SalaryIncrease_ExactlyMinusTen_ShouldShowErrors()
+    {
+        driver.Navigate().GoToUrl(BaseURL);
+        driver.FindElement(By.XPath("//*[@data-test='PersonPageNavigation']")).Click();
+        System.Threading.Thread.Sleep(1000);
+
+        var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(5));
+
+        var input = wait.Until(ExpectedConditions.ElementExists(By.XPath("//*[@data-test='SalaryIncreasePercentageInput']")));
+        input.Clear();
+        input.SendKeys("-10");
+
+        driver.FindElement(By.XPath("//*[@data-test='SalaryIncreaseSubmitButton']")).Click();
+
+        wait.Until(ExpectedConditions.ElementExists(By.CssSelector(".validation-errors"))).Text.Should().NotBeNullOrEmpty();
+        wait.Until(ExpectedConditions.ElementExists(By.CssSelector(".field-validation-error"))).Text.Should().NotBeNullOrEmpty();
+    }
+
+    [Test]
+    public void BlazeDemo_MexicoCity_To_Dublin_ShouldHaveAtLeastThreeFlights()
+    {
+        driver.Navigate().GoToUrl("https://blazedemo.com");
+
+        driver.FindElement(By.XPath("//select[@name='fromPort']/option[text()='Mexico City']")).Click();
+        driver.FindElement(By.XPath("//select[@name='toPort']/option[text()='Dublin']")).Click();
+        driver.FindElement(By.CssSelector("input[type='submit']")).Click();
+
+        var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
+        wait.Until(ExpectedConditions.ElementExists(By.CssSelector("table tbody tr")));
+
+        driver.FindElements(By.CssSelector("table tbody tr")).Count.Should().BeGreaterThanOrEqualTo(3);
     }
     private bool IsElementPresent(By by)
     {
